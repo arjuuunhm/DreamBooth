@@ -1,1 +1,10 @@
 __pycache__/
+
+# Ignore all files in the checkpoints directory
+checkpoints/*
+
+# But do not ignore the checkpoints directory itself
+!checkpoints/
+
+# Ensure the directory is tracked by Git by keeping an empty file
+!checkpoints/.gitkeep
