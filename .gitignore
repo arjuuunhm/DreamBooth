@@ -1,5 +1,7 @@
 __pycache__/
 
+.ipynb_checkpoints/
+
 # Ignore all files in the checkpoints directory
 checkpoints/*
 
