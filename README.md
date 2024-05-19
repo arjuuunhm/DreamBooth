@@ -78,31 +78,43 @@ Some discrepancies/challenges we faced during re-implementation that could have 
 3. It can be seen from our results that some of the images contain a lot of noise. This implies that our model is having some difficulties with denoising. The original paper did not describe exactly how to handle applying noise and timesteps for the denoising process, which required us to, so we assumed that we should gradually add noise as the training progresses. This could explain why we have noisy outputs.
    
 4. There is a lot of abstraction that comes with the hugging face stable diffusion pipeline. Figuring out exactly how different parts of the pipeline worked was a bit difficult and documentation that answered our confusion were a bit difficult to read/find. Having gaps in knowledge in the pipeline definitely could have contributed to our results not being as we had hoped.
-
+![Screenshot 2024-05-18 at 11 58 39 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/18ba2887-6e75-47d1-b2a3-712d7a22d34d)
+Original Dreambooth dog
 ![Screenshot 2024-05-18 at 11 25 20 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/98e7ecb4-18a6-4caa-9266-a85e24ad7176)
-
+Prompt:"A photo of a mytoken dog on the street"
 ![Screenshot 2024-05-18 at 11 24 47 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/d111e85d-fa7b-4867-9559-fa9e158586ef)
-
+Prompt:"A photo of a mytoken dog on the street"
 ![Screenshot 2024-05-18 at 11 24 14 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/22d46fb9-0bfc-4c1d-8f0a-6f84f0e68e04)
-
+Prompt:"A photo of a mytoken dog driving"
 ![Screenshot 2024-05-18 at 11 23 40 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/01bf0385-ff8e-418b-8f39-8109804b1d58)
-
+Prompt:"A photo of a mytoken dog driving"
 ![Screenshot 2024-05-18 at 11 23 07 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/7032b5bc-e2e2-4356-9082-20722d7c0943)
-
+Prompt:"A photo of a mytoken dog driving"
 ![Screenshot 2024-05-18 at 11 27 27 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/95807378-4528-4783-a55b-c6bab17d5794)
-
+Prompt: "A photo of a mytoken dog in Paris"
 ![Screenshot 2024-05-18 at 11 28 09 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/e8e93e53-7345-4c91-b481-27213e9804a1)
-
+Prompt: "A photo of a mytoken dog in the city"
 ![Screenshot 2024-05-18 at 11 28 39 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/1d1465bc-e057-46d4-b6a4-89ac7d11b8df)
-
+Prompt: "A photo of a mytoken dog swimming"
 ![Screenshot 2024-05-18 at 11 29 15 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/b958ffb2-e4da-4310-a94b-a81ebef85add)
+Prompt: "A photo of a mytoken dog swimming"
 
 ![Screenshot 2024-05-18 at 11 39 44 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/1bcbc713-9b42-4bfe-b5af-11cead01b4e4)
+Prompt: "A photo of a mytoken dog at the acropolis"
+
+Analysis of Results: 
+Above are results from our finetuned model. There are a few images of dogs that appear to be clear and have some resemblence to our original dreambooth dog. Although they are not the same exact dog the dogs that have been rendered have a similar shape/color/size as the dreambooth dog. We can see other photos that also appear to have some resemblence to our dreambooth dog but the outputs are quite noisy. We believe that this is due to our issues with denoising which we discussed above. Lastly there is a photo of pure gaussian noise. This shows that the diffusion model was unable to denoise the image at all. There are a few examples of pure gaussian noise so there is some variability in our results. This can be dependent on prompt complexity as well. We can also see there is some deformaties in some of the images. We think this could have been caused by some instabilities while training, noise issues, or the model itself because when you sample from the pretrained version the outputs aren't entirely realistic looking. 
 
 3.5 – Conclusion and Future Work
 We learned a lot from working on this project. Before working on this project we knew a bit about stable diffusion but now we understand a lot more about all the components in the stable diffusion pipeline and what role each component plays. We also understand more about how image processing works in the latent space. On prior coding assignments we didn’t really run into CUDA Out of Memory errors as much before the workloads were suited towards the GPUs. Working on this project we learned a lot more about how GPU programming and memory works. We also got a better understanding of how to use open-source resources like hugging face. We got more practice evaluating our models by using metrics like DINO. We got more hands-on research experience by taking a research paper, like DreamBooth, and implementing it from scratch.  This gave us more insight into the models and architectures to consider when implementing this method, considering the little amount of implementation details we were given. We both were intrigued by lots of the fine-tuning GenAI applications that were happening in industry. We are glad we got the opportunity to experience first-hand work in this area. 
 
 One of our biggest challenges were with the level of noise left in our outputs. We believe that we weren’t able to figure out exactly how to configure the noise-scheduler and unet timesteps when training. We were not able to find how the authors implemented it in their stable diffusion model since they spoke more about the imagen model in the paper and didn’t share their codebase. We were lucky to obtain a better GPU for our training later on as we were working on this project. We did not have this chance for the majority of our project. Some areas to explore are possibly using smaller diffusion models with fewer parameters to reduce computation overhead and memory requirements. Another strategy worth exploring is mixed precision training. We found that when using quantization with 16-bit floating point types we were able to avoid memory issues, but we had a lot of NaNs in our loss calculation so we switched back to 32-bit floating point types. By using mixed-precision we could definitely improve memory performance while having more stability. 
 We could extend our model to other forms of generative AI. The main idea of Dream Booth is to take a subject and fine-tune an existing model so that the subject can be inserted into different domains. We feel this objective has the most potential and relevance in the context of generative AI. For example we have heard AI generated music of rappers like Drake. A similar fine-tuning approach on text-to-speech models can be done to bring artists into a new genre of music. This image problem can be transferred to the domain of videos as well. It seems like a similar problem since now we are just adding time as a dimension. It is worth noting though that such models can be dangerous as they could potentially be used to generate fake images of people which could be used for malicious purposes.
+
+3.6 – References
+Research paper: https://arxiv.org/pdf/2208.12242 
+Dataset inspiration: https://github.com/google/dreambooth/tree/4f887af7970a06fc0cd3adaa1d0b368547d6a1d0/dataset  
+Video for theoretical knowledge about the paper: https://www.youtube.com/watch?v=D641lhioXMc 
+model card: https://huggingface.co/CompVis/stable-diffusion-v1-4
 
 
