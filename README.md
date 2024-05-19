@@ -67,6 +67,37 @@ In regards to running the code/metric.py file, the images are hardcoded with ima
 GPU Requirements:
 We trained our model on a V100 GPU. Stable Diffusion Models take up a lot of memory. We were able to reduce a lot of memory by using gradient accumulation and manually offloading memory intensive tensors during training. GPUs like 3090s should be enough to replicate our results however. If you are facing CUDA Out of Memory errors when training our model on such a GPU, then we recommend you use a V100. (Note: The GPU from the paper is an NVIDIA A100).
 
+3.4 – Results
+Our reported score for DINO is a 0.315 so we were unable to reproduce the result provided by the paper which was a 0.668. 
+Some discrepancies/challenges we faced during re-implementation that could have impacted our results are: 
+
+1. Memory capacity of our GPU. In the paper the authors were using an A100. Since we had access to less powerful compute ability we had to make modifications that could have compromised our model’s ability to learn how to denoise better. Examples of this are us needing to find a dataset of dog images generated from other stable diffusion models. Prior to us using a V100, we were using much slower models that took a few minutes to sample from our diffusion model so sampling 200 images from our model was not an option.
+   
+2. In the paper they didn’t specify which token to use as an identifier [V]. We found through research that ‘sks’ is a popular choice for [V]. As discussed in the paper, the choice for [V] depends on the text-to-image model’s vocabulary. Because Google is probably using a larger text-to-image model than us, the ‘sks’ token may not be as useful as expected, making it difficult to reproduce their results given the few resources we have. We found that ‘sks’ didn’t perform so well. We saw that our model had a stronger prior semantic understanding of ‘sks’ than we had originally believed since all the photos of dogs with an ‘sks’ token generated dogs in a military setting or with a firearm because an ‘sks’ is a firearm. We found that using a more unique token like ‘mytoken’ yielded better results. We were also unable to get frequency information about the language model for our stable diffusion model, unlike Google, so we weren’t able to find the optimal token out on our own.
+
+3. It can be seen from our results that some of the images contain a lot of noise. This implies that our model is having some difficulties with denoising. The original paper did not describe exactly how to handle applying noise and timesteps for the denoising process, which required us to, so we assumed that we should gradually add noise as the training progresses. This could explain why we have noisy outputs.
+   
+4. There is a lot of abstraction that comes with the hugging face stable diffusion pipeline. Figuring out exactly how different parts of the pipeline worked was a bit difficult and documentation that answered our confusion were a bit difficult to read/find. Having gaps in knowledge in the pipeline definitely could have contributed to our results not being as we had hoped.
+
+![Screenshot 2024-05-18 at 11 25 20 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/98e7ecb4-18a6-4caa-9266-a85e24ad7176)
+
+![Screenshot 2024-05-18 at 11 24 47 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/d111e85d-fa7b-4867-9559-fa9e158586ef)
+
+![Screenshot 2024-05-18 at 11 24 14 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/22d46fb9-0bfc-4c1d-8f0a-6f84f0e68e04)
+
+![Screenshot 2024-05-18 at 11 23 40 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/01bf0385-ff8e-418b-8f39-8109804b1d58)
+
+![Screenshot 2024-05-18 at 11 23 07 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/7032b5bc-e2e2-4356-9082-20722d7c0943)
+
+![Screenshot 2024-05-18 at 11 27 27 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/95807378-4528-4783-a55b-c6bab17d5794)
+
+![Screenshot 2024-05-18 at 11 28 09 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/e8e93e53-7345-4c91-b481-27213e9804a1)
+
+![Screenshot 2024-05-18 at 11 28 39 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/1d1465bc-e057-46d4-b6a4-89ac7d11b8df)
+
+![Screenshot 2024-05-18 at 11 29 15 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/b958ffb2-e4da-4310-a94b-a81ebef85add)
+
+![Screenshot 2024-05-18 at 11 39 44 PM](https://github.com/arjuuunhm/DreamBooth/assets/96384102/1bcbc713-9b42-4bfe-b5af-11cead01b4e4)
 
 3.5 – Conclusion and Future Work
 We learned a lot from working on this project. Before working on this project we knew a bit about stable diffusion but now we understand a lot more about all the components in the stable diffusion pipeline and what role each component plays. We also understand more about how image processing works in the latent space. On prior coding assignments we didn’t really run into CUDA Out of Memory errors as much before the workloads were suited towards the GPUs. Working on this project we learned a lot more about how GPU programming and memory works. We also got a better understanding of how to use open-source resources like hugging face. We got more practice evaluating our models by using metrics like DINO. We got more hands-on research experience by taking a research paper, like DreamBooth, and implementing it from scratch.  This gave us more insight into the models and architectures to consider when implementing this method, considering the little amount of implementation details we were given. We both were intrigued by lots of the fine-tuning GenAI applications that were happening in industry. We are glad we got the opportunity to experience first-hand work in this area. 
